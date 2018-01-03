@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">VocabSensei</string>
+    <string name="action_button_easy">EASY</string>
+    <string name="action_button_medium">MEDIUM</string>
+    <string name="action_button_difficult">DIFFICULT</string>
+    <string name="action_button_random">RANDOM</string>
+</resources>

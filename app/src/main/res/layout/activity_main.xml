@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.welcomebuddy.randomtech.vocabsensei.MainActivity"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WHEN YOUR VOCAB \n MEETS SENSEI!"
+        android:fontFamily="monospace"
+        android:layout_gravity="center"
+        android:textSize="22sp"
+        android:layout_marginTop="50sp"
+        android:textColor="@android:color/black"/>
+
+    <Button
+        android:id="@+id/action_button_easy"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless"
+        android:layout_width="316dp"
+        android:layout_height="51dp"
+        android:background="@drawable/roundedbutton"
+        android:fontFamily="monospace"
+        android:text="@string/action_button_easy"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        android:visibility="visible"
+        android:layout_marginTop="40sp"
+        android:layout_marginBottom="10sp"
+        android:layout_marginLeft="10sp"
+        android:layout_marginRight="10sp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/action_button_medium"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless"
+        android:layout_width="316dp"
+        android:layout_height="51dp"
+        android:background="@drawable/roundedbutton"
+        android:fontFamily="monospace"
+        android:text="@string/action_button_medium"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        android:visibility="visible"
+        android:layout_margin="10sp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/action_button_difficult"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless"
+        android:layout_width="316dp"
+        android:layout_height="51dp"
+        android:background="@drawable/roundedbutton"
+        android:fontFamily="monospace"
+        android:text="@string/action_button_difficult"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        android:visibility="visible"
+        android:layout_margin="10sp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/action_button_random"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless"
+        android:layout_width="316dp"
+        android:layout_height="51dp"
+        android:background="@drawable/roundedbutton"
+        android:fontFamily="monospace"
+        android:text="@string/action_button_random"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        android:visibility="visible"
+        android:layout_margin="10sp"
+        android:layout_gravity="center"/>
+</LinearLayout>
