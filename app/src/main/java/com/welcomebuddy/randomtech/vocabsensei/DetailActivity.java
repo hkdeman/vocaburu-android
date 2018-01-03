@@ -1,16 +1,13 @@
 package com.welcomebuddy.randomtech.vocabsensei;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -109,16 +107,35 @@ public class DetailActivity extends AppCompatActivity {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
             layoutParams.setMargins(60,40,60,40);
             button.setLayoutParams(layoutParams);
+            button.setTextColor(getResources().getColor(R.color.white));
             button.setText(detail+" "+i);
             final int position = i;
+            final int randomGuess = generateRandom(1,11,position);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent startDetailActivity = new Intent(view.getContext(),QuizActivity.class);
                     Bundle extras = new Bundle();
                     extras.putString("detail", detail);
-                    extras.putString("position",Integer.toString(position));
-                    extras.putString("words",words.toString());
+                    JSONArray short_list = new JSONArray();
+                    for(int j =(position-1)*11;j<=position*11;j++) {
+                        try {
+                            short_list.put(words.getJSONObject(j));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    JSONArray guess_list = new JSONArray();
+                    for(int j =(randomGuess-1)*11;j<=randomGuess*11;j++) {
+                        try {
+                            guess_list.put(words.getJSONObject(j));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    extras.putString("words",short_list.toString());
+                    extras.putSerializable("guesses",guess_list.toString());
                     startDetailActivity.putExtras(extras);
                     startActivity(startDetailActivity);
                 }
@@ -151,4 +168,22 @@ public class DetailActivity extends AppCompatActivity {
 //        textView.setText(word_list.get("easy").toString());
 //        setupPage("Easy", word_list.get("easy"));
     }
+
+
+    public int generateRandom(int start, int end, int excludeValue) {
+        Random rand = new Random();
+        int range = end - start + 1;
+        int random = 0;
+
+        boolean success = false;
+        while(!success) {
+            random = rand.nextInt(range) + 1;
+                if(excludeValue != random) {
+                    break;
+                }
+            }
+        return random;
+    }
+
+
 }
