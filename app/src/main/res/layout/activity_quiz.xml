@@ -5,22 +5,34 @@
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textview_score"
-        android:layout_marginRight="10dp"
-        android:textSize="15dp"
-        android:layout_gravity="left"
-        android:textColor="#005c5c"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textview_status"
-        android:layout_marginRight="10dp"
-        android:textSize="15dp"
-        android:layout_gravity="right"
-        android:textColor="#005c5c"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="10sp"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textview_score"
+            android:fontFamily="monospace"
+            android:layout_marginLeft="10dp"
+            android:textSize="15dp"
+            android:layout_gravity="start"
+            android:textColor="@color/dark_weird_blue"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:id="@+id/textview_status"
+            android:layout_marginRight="10dp"
+            android:textSize="15dp"
+            android:textColor="@color/dark_weird_blue"/>
+
+    </LinearLayout>
+
+
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_height="match_parent"
@@ -29,7 +41,7 @@
         android:gravity="center"
         android:background="@drawable/roundedbutton"
         android:layout_marginBottom="30dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp">
 

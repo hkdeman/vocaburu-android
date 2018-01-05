@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical">
+
+    
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,16 +17,29 @@
         android:textSize="18sp"
         android:layout_gravity="center"
         android:layout_marginTop="40sp"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/progressbar_details"
+        android:visibility="visible"
+        android:layout_marginTop="50sp"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="40sp"
+        android:layout_marginTop="50sp"
         android:id="@+id/scrollview_words">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/linearlayout_details"
             android:orientation="vertical"
+            android:visibility="invisible"
             android:gravity="center">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

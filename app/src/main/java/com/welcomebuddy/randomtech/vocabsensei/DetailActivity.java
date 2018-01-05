@@ -2,12 +2,13 @@ package com.welcomebuddy.randomtech.vocabsensei;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.welcomebuddy.randomtech.vocabsensei.Database.QuizContract;
@@ -16,7 +17,6 @@ import com.welcomebuddy.randomtech.vocabsensei.Database.QuizDbHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,6 +106,12 @@ public class DetailActivity extends AppCompatActivity {
                 }
             }
         }
+
+        ProgressBar progressBarDetails = findViewById(R.id.progressbar_details);
+        progressBarDetails.setVisibility(View.GONE);
+
+        LinearLayout linearLayoutDetails = findViewById(R.id.linearlayout_details);
+        linearLayoutDetails.setVisibility(View.VISIBLE);
 
     }
 
