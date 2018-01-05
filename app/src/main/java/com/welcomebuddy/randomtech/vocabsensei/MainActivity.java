@@ -69,14 +69,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        randomButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent startDetailActivity = new Intent(view.getContext(),DetailActivity.class);
-//                startDetailActivity.putExtra("detail","random");
-//                startActivity(startDetailActivity);
-//            }
-//        });
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getScores();
     }
 
     protected void getScores() {
@@ -152,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         for(int i=0;i<3;i++) {
-            for(int j=1;j<=11;j++) {
+            for(int j=1;j<=10;j++) {
                 values.put(QuizContract.QuizEntry.COLUMN_KEY, j);
                 values.put(QuizContract.QuizEntry.COLUMN_DETAIL, details.get(i));
                 values.put(QuizContract.QuizEntry.COLUMN_SCORE,0);

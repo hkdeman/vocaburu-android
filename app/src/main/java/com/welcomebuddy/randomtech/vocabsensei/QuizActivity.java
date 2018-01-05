@@ -195,7 +195,7 @@ public class QuizActivity extends AppCompatActivity {
         TextView textView = findViewById(v.getId());
         checkAnswer(textView.getText().toString());
     }
-cd
+
     protected void fourthChoice(View v) {
         TextView textView = findViewById(v.getId());
         checkAnswer(textView.getText().toString());

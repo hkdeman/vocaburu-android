@@ -48,8 +48,6 @@ public class DetailActivity extends AppCompatActivity {
                     setupMedium();
                 } else if(detail.equals("difficult")) {
                     setupDifficult();
-                } else if(detail.equals("random")) {
-                    setupRandom();
                 }
             }
         }
@@ -141,7 +139,7 @@ public class DetailActivity extends AppCompatActivity {
 
         while(data.moveToNext()) {
             int itemId = data.getInt(
-                    data.getColumnIndexOrThrow(QuizContract.QuizEntry.COLUMN_SCORE));
+                        data.getColumnIndexOrThrow(QuizContract.QuizEntry.COLUMN_SCORE));
             scores.add(itemId);
         }
         data.close();
@@ -152,12 +150,14 @@ public class DetailActivity extends AppCompatActivity {
             int buttonResID = getResources().getIdentifier(buttonId, "id", getPackageName());
             int scoreResID = getResources().getIdentifier(scoreId, "id", getPackageName());
             Button button = findViewById(buttonResID);
+
             TextView score = findViewById(scoreResID);
             button.setText(detail.toUpperCase()+" "+i);
-            score.setText("Score : "+scores.get(i));
+            score.setText("Score : "+Integer.toString(scores.get(i-1)));
 
             final int position = i;
             final int randomGuess = generateRandom(1,11,position);
+
 
 
             button.setOnClickListener(new View.OnClickListener() {
