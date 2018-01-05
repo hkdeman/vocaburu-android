@@ -1,35 +1,43 @@
 package com.welcomebuddy.randomtech.vocabsensei;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.welcomebuddy.randomtech.vocabsensei.Database.QuizContract;
+import com.welcomebuddy.randomtech.vocabsensei.Database.QuizDbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private String detail;
-    private JSONArray vocabulary;
-    private Map<String,JSONArray> word_list = new HashMap<>();
-
+    private static String detail;
+    private static JSONArray vocabulary;
+    private static Map<String,JSONArray> word_list = new HashMap<>();
+    private static List<Integer> scores;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         getData();
+        setupScore();
         Intent intentFromMainActivity = getIntent();
         if(intentFromMainActivity.hasExtra("detail")) {
             if(intentFromMainActivity.getStringExtra("detail")!=null) {
@@ -44,6 +52,18 @@ public class DetailActivity extends AppCompatActivity {
                     setupRandom();
                 }
             }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(detail.equals("easy")) {
+            setupEasy();
+        } else if(detail.equals("medium")) {
+            setupMedium();
+        } else if(detail.equals("difficult")) {
+            setupDifficult();
         }
     }
 
@@ -93,24 +113,53 @@ public class DetailActivity extends AppCompatActivity {
 
     protected void setupPage(final String detail, final JSONArray words) {
         int n_buttons = words.length()/11;
-        ScrollView scrollView = findViewById(R.id.scrollview_words);
-        LinearLayout linearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-        llParams.gravity = Gravity.CENTER;
 
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setLayoutParams(llParams);
+        QuizDbHelper dbHelper = new QuizDbHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] projection = {
+                QuizContract.QuizEntry._ID,
+                QuizContract.QuizEntry.COLUMN_KEY,
+                QuizContract.QuizEntry.COLUMN_DETAIL,
+                QuizContract.QuizEntry.COLUMN_SCORE
+        };
+
+        String selection = QuizContract.QuizEntry.COLUMN_DETAIL + " = ?";
+        String[] selectionArgs = {detail.toLowerCase()};
+
+        Cursor data = db.query(
+                QuizContract.QuizEntry.TABLE_NAME,                     // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                        // The sort order
+        );
+
+        scores = new ArrayList<>();
+
+        while(data.moveToNext()) {
+            int itemId = data.getInt(
+                    data.getColumnIndexOrThrow(QuizContract.QuizEntry.COLUMN_SCORE));
+            scores.add(itemId);
+        }
+        data.close();
 
         for(int i =1;i<n_buttons+1;i++) {
-            Button button = new Button(this);
-            button.setBackgroundDrawable(getResources().getDrawable(R.drawable.roundedbutton));
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParams.setMargins(60,40,60,40);
-            button.setLayoutParams(layoutParams);
-            button.setTextColor(getResources().getColor(R.color.white));
-            button.setText(detail+" "+i);
+            String buttonId = "dashboard_button_"+i;
+            String scoreId = "dashboard_score_"+i;
+            int buttonResID = getResources().getIdentifier(buttonId, "id", getPackageName());
+            int scoreResID = getResources().getIdentifier(scoreId, "id", getPackageName());
+            Button button = findViewById(buttonResID);
+            TextView score = findViewById(scoreResID);
+            button.setText(detail.toUpperCase()+" "+i);
+            score.setText("Score : "+scores.get(i));
+
             final int position = i;
             final int randomGuess = generateRandom(1,11,position);
+
+
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -134,15 +183,14 @@ public class DetailActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
+                    extras.putString("position",Integer.toString(position));
                     extras.putString("words",short_list.toString());
                     extras.putSerializable("guesses",guess_list.toString());
                     startDetailActivity.putExtras(extras);
                     startActivity(startDetailActivity);
                 }
             });
-            linearLayout.addView(button);
         }
-        scrollView.addView(linearLayout);
     }
 
     protected void setupEasy() {
@@ -170,7 +218,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-    public int generateRandom(int start, int end, int excludeValue) {
+    protected int generateRandom(int start, int end, int excludeValue) {
         Random rand = new Random();
         int range = end - start + 1;
         int random = 0;
@@ -183,6 +231,14 @@ public class DetailActivity extends AppCompatActivity {
                 }
             }
         return random;
+    }
+
+
+    protected void setupScore() {
+        scores = new ArrayList<>();
+        for(int i=0;i<11;i++) {
+            scores.add(0);
+        }
     }
 
 

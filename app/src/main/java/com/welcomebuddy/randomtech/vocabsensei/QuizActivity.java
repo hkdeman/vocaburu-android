@@ -1,11 +1,21 @@
 package com.welcomebuddy.randomtech.vocabsensei;
 
+import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.welcomebuddy.randomtech.vocabsensei.Database.QuizContract;
+import com.welcomebuddy.randomtech.vocabsensei.Database.QuizDbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +35,10 @@ public class QuizActivity extends AppCompatActivity {
     private static String detail;
     private static JSONArray word_list;
     private static int SCORE;
+    private static int position;
+
+    Dialog hintPopUp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +48,7 @@ public class QuizActivity extends AppCompatActivity {
         Intent intentFromDetailActivity = getIntent();
         if(intentFromDetailActivity.getExtras()!=null) {
             detail = intentFromDetailActivity.getExtras().getString("detail");
+            position = Integer.parseInt(intentFromDetailActivity.getExtras().getString("position"));
             try {
                 words = new JSONArray(intentFromDetailActivity.getExtras().getString("words"));
                 guesses = new JSONArray(intentFromDetailActivity.getExtras().getString("guesses"));
@@ -45,6 +60,7 @@ public class QuizActivity extends AppCompatActivity {
         }
         TextView score = findViewById(R.id.textview_score);
         score.setText("Score: "+SCORE);
+        hintPopUp = new Dialog(this);
     }
 
     protected void layoutTheQuiz(){
@@ -108,6 +124,7 @@ public class QuizActivity extends AppCompatActivity {
         return guess_choices;
     }
 
+
     protected JSONArray shuffle(JSONArray array) {
         List<Integer> numbers = new ArrayList<>();
         for(int i=0;i<4;i++) {
@@ -124,6 +141,7 @@ public class QuizActivity extends AppCompatActivity {
         }
         return shuffled_array;
     }
+
 
     protected void checkAnswer(String answer) {
         if(QUIZ_INCREMENT<10) {
@@ -143,6 +161,23 @@ public class QuizActivity extends AppCompatActivity {
             }
             QUIZ_INCREMENT++;
             layoutTheQuiz();
+        } else {
+            Toast.makeText(this, "Quiz up, try the next one!!",
+                    Toast.LENGTH_SHORT).show();
+
+            QuizDbHelper mDbHelper = new QuizDbHelper(this);
+
+            // Gets the data repository in write mode
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+            // Create a new map of values, where column names are the keys
+            ContentValues values = new ContentValues();
+            values.put(QuizContract.QuizEntry.COLUMN_SCORE,SCORE);
+
+            String selector = QuizContract.QuizEntry.COLUMN_KEY + " = ? AND " + QuizContract.QuizEntry.COLUMN_DETAIL + " = ?";
+            String[] selectOptions = {Integer.toString(position),detail.toLowerCase()};
+
+            db.update(QuizContract.QuizEntry.TABLE_NAME,values,selector,selectOptions);
         }
     }
 
@@ -160,10 +195,32 @@ public class QuizActivity extends AppCompatActivity {
         TextView textView = findViewById(v.getId());
         checkAnswer(textView.getText().toString());
     }
-
+cd
     protected void fourthChoice(View v) {
         TextView textView = findViewById(v.getId());
         checkAnswer(textView.getText().toString());
+    }
+
+    protected void getHint(View v) {
+        hintPopUp.setContentView(R.layout.hint_pop);
+        TextView hintPopUpText = hintPopUp.findViewById(R.id.quiz_hint_text);
+        Button cancelButton = hintPopUp.findViewById(R.id.cancel_button);
+
+        try {
+            hintPopUpText.setText(word_list.getJSONObject(QUIZ_INCREMENT).getString("sentence"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hintPopUp.dismiss();
+            }
+        });
+
+        hintPopUp.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        hintPopUp.show();
     }
 
 

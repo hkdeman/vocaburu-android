@@ -14,27 +14,52 @@
         android:text="WHEN YOUR VOCAB \n MEETS SENSEI!"
         android:fontFamily="monospace"
         android:layout_gravity="center"
+        android:id="@+id/quiz_title"
         android:textSize="22sp"
         android:layout_marginTop="50sp"
+        android:layout_marginBottom="15sp"
         android:textColor="@android:color/black"/>
 
-    <Button
-        android:id="@+id/action_button_easy"
-        style="@android:style/Widget.DeviceDefault.Button.Borderless"
-        android:layout_width="316dp"
-        android:layout_height="51dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/roundedbutton"
-        android:fontFamily="monospace"
-        android:text="@string/action_button_easy"
-        android:textColor="@android:color/background_light"
-        android:textSize="18sp"
-        android:visibility="visible"
-        android:layout_marginTop="40sp"
-        android:layout_marginBottom="10sp"
-        android:layout_marginLeft="10sp"
-        android:layout_marginRight="10sp"
-        android:layout_gravity="center"/>
+        android:backgroundTint="@color/light_weird_blue"
+        android:layout_margin="15dp"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/action_button_easy"
+            style="@android:style/Widget.DeviceDefault.Button.Borderless"
+            android:layout_width="316dp"
+            android:layout_height="51dp"
+            android:background="@drawable/roundedbutton"
+            android:fontFamily="monospace"
+            android:text="@string/action_button_easy"
+            android:textColor="@android:color/background_light"
+            android:textSize="18sp"
+            android:visibility="visible"
+            android:layout_margin="10sp"
+            android:layout_gravity="center"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:id="@+id/dashboard_score_easy"
+            android:layout_marginBottom="10sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/roundedbutton"
+        android:backgroundTint="@color/light_weird_blue"
+        android:layout_margin="15dp"
+        android:layout_gravity="center"
+        android:orientation="vertical">
     <Button
         android:id="@+id/action_button_medium"
         style="@android:style/Widget.DeviceDefault.Button.Borderless"
@@ -49,6 +74,24 @@
         android:layout_margin="10sp"
         android:layout_gravity="center"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:id="@+id/dashboard_score_medium"
+            android:layout_marginBottom="10sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/roundedbutton"
+        android:backgroundTint="@color/light_weird_blue"
+        android:layout_margin="15dp"
+        android:layout_gravity="center"
+        android:orientation="vertical">
     <Button
         android:id="@+id/action_button_difficult"
         style="@android:style/Widget.DeviceDefault.Button.Borderless"
@@ -63,17 +106,14 @@
         android:layout_margin="10sp"
         android:layout_gravity="center"/>
 
-    <Button
-        android:id="@+id/action_button_random"
-        style="@android:style/Widget.DeviceDefault.Button.Borderless"
-        android:layout_width="316dp"
-        android:layout_height="51dp"
-        android:background="@drawable/roundedbutton"
-        android:fontFamily="monospace"
-        android:text="@string/action_button_random"
-        android:textColor="@android:color/background_light"
-        android:textSize="18sp"
-        android:visibility="visible"
-        android:layout_margin="10sp"
-        android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:id="@+id/dashboard_score_difficult"
+            android:layout_marginBottom="10sp"/>
+
+    </LinearLayout>
+
 </LinearLayout>
