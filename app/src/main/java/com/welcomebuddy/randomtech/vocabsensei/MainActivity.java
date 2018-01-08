@@ -29,9 +29,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Button easyButton = findViewById(R.id.action_button_easy);
-        final Button mediumButton = findViewById(R.id.action_button_medium);
-        final Button difficultButton = findViewById(R.id.action_button_difficult);
 //        final Button randomButton = findViewById(R.id.action_button_random);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -40,35 +37,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setupDB(prefs);
         }
-
-
-        easyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent startDetailActivity = new Intent(view.getContext(),DetailActivity.class);
-                startDetailActivity.putExtra("detail","easy");
-                startActivity(startDetailActivity);
-            }
-        });
-
-        mediumButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent startDetailActivity = new Intent(view.getContext(),DetailActivity.class);
-                startDetailActivity.putExtra("detail","medium");
-                startActivity(startDetailActivity);
-            }
-        });
-
-        difficultButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent startDetailActivity = new Intent(view.getContext(),DetailActivity.class);
-                startDetailActivity.putExtra("detail","difficult");
-                startActivity(startDetailActivity);
-            }
-        });
-
     }
 
 
@@ -84,9 +52,60 @@ public class MainActivity extends AppCompatActivity {
         TextView mediumScore = findViewById(R.id.dashboard_score_medium);
         TextView difficultScore = findViewById(R.id.dashboard_score_difficult);
 
-        easyScore.setText("Score : "+String.valueOf(getAverageScore("easy")));
-        mediumScore.setText("Score : "+String.valueOf(getAverageScore("medium")));
-        difficultScore.setText("Score : "+String.valueOf(getAverageScore("difficult")));
+        double easyAverageScore = getAverageScore("easy");
+        double mediumAverageScore = getAverageScore("medium");
+        double difficultAverageScore = getAverageScore("difficult");
+
+        final Button easyButton = findViewById(R.id.action_button_easy);
+        final Button mediumButton = findViewById(R.id.action_button_medium);
+        final Button difficultButton = findViewById(R.id.action_button_difficult);
+
+        easyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent startDetailActivity = new Intent(view.getContext(),DetailActivity.class);
+                startDetailActivity.putExtra("detail","easy");
+                startActivity(startDetailActivity);
+            }
+        });
+
+        if(easyAverageScore>10) {
+            mediumButton.setClickable(true);
+            mediumButton.setText("MEDIUM");
+            mediumButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Intent startDetailActivity = new Intent(view.getContext(),DetailActivity.class);
+                    startDetailActivity.putExtra("detail","medium");
+                    startActivity(startDetailActivity);
+                }
+            });
+        } else {
+            mediumButton.setClickable(false);
+            mediumButton.setText("MEDIUM (Locked)");
+        }
+
+        if (mediumAverageScore>10) {
+            difficultButton.setClickable(true);
+            difficultButton.setText("DIFFICULT");
+                difficultButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent startDetailActivity = new Intent(view.getContext(),DetailActivity.class);
+                        startDetailActivity.putExtra("detail","difficult");
+                        startActivity(startDetailActivity);
+                    }
+                });
+
+        } else {
+            difficultButton.setClickable(false);
+            difficultButton.setText("DIFFICULT (Locked)");
+        }
+
+        easyScore.setText("Score : "+String.valueOf(easyAverageScore));
+        mediumScore.setText("Score : "+String.valueOf(mediumAverageScore));
+        difficultScore.setText("Score : "+String.valueOf(difficultAverageScore));
 
     }
 

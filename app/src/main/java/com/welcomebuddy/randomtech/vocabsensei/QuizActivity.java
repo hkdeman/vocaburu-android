@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +30,7 @@ import java.util.List;
 import java.util.Random;
 
 public class QuizActivity extends AppCompatActivity {
-    private static int QUIZ_INCREMENT=0;
+    private static int QUIZ_INCREMENT=1;
     private static JSONArray words;
     private static JSONArray guesses;
     private static String detail;
@@ -70,7 +71,7 @@ public class QuizActivity extends AppCompatActivity {
         TextView secondChoice = findViewById(R.id.textview_second_choice);
         TextView thirdChoice = findViewById(R.id.textview_third_choice);
         TextView fourthChoice = findViewById(R.id.textview_fourth_choice);
-        status.setText(QUIZ_INCREMENT+1+"/11");
+        status.setText(QUIZ_INCREMENT+"/11");
         try {
             JSONArray guess_list = getGuesses(guesses);
             guess_list.put(word_list.getJSONObject(QUIZ_INCREMENT));
@@ -144,7 +145,7 @@ public class QuizActivity extends AppCompatActivity {
 
 
     protected void checkAnswer(String answer) {
-        if(QUIZ_INCREMENT<10) {
+        if(QUIZ_INCREMENT<11) {
             try {
                 if (answer.equals(word_list.getJSONObject(QUIZ_INCREMENT).getString("definition"))) {
                     SCORE++;
@@ -178,6 +179,7 @@ public class QuizActivity extends AppCompatActivity {
             String[] selectOptions = {Integer.toString(position),detail.toLowerCase()};
 
             db.update(QuizContract.QuizEntry.TABLE_NAME,values,selector,selectOptions);
+
         }
     }
 
@@ -224,4 +226,32 @@ public class QuizActivity extends AppCompatActivity {
     }
 
 
+    protected void finishQuiz() {
+        hintPopUp.setContentView(R.layout.hint_pop);
+        TextView scorePopUpText = hintPopUp.findViewById(R.id.quiz_hint_text);
+        Button cancelButton = hintPopUp.findViewById(R.id.cancel_button);
+        Button goBack = new Button(this);
+
+        String score_text= "You achieved the score of : "+SCORE+"\n keep trying!";
+        scorePopUpText.setText(score_text);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hintPopUp.dismiss();
+            }
+        });
+
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        LinearLayout linearLayout = findViewById(R.id.quiz_layout_hint);
+        linearLayout.addView(goBack);
+        hintPopUp.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        hintPopUp.show();
+    }
 }
