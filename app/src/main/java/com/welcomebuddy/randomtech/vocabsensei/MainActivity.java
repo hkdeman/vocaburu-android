@@ -1,5 +1,6 @@
 package com.welcomebuddy.randomtech.vocabsensei;
 
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,12 +21,15 @@ import android.widget.TextView;
 import com.welcomebuddy.randomtech.vocabsensei.Database.QuizContract;
 import com.welcomebuddy.randomtech.vocabsensei.Database.QuizDbHelper;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private Cursor data;
+    private Dialog errorPopUp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setupDB(prefs);
         }
+        errorPopUp = new Dialog(this);
     }
 
 
@@ -70,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if(easyAverageScore>10) {
-            mediumButton.setClickable(true);
             mediumButton.setText("MEDIUM");
             mediumButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -82,12 +88,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         } else {
-            mediumButton.setClickable(false);
             mediumButton.setText("MEDIUM (Locked)");
+            mediumButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showTheRequiredAverageGradeDialog("Easy");
+                }
+            });
         }
 
         if (mediumAverageScore>10) {
-            difficultButton.setClickable(true);
             difficultButton.setText("DIFFICULT");
                 difficultButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -99,8 +109,13 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         } else {
-            difficultButton.setClickable(false);
             difficultButton.setText("DIFFICULT (Locked)");
+            difficultButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showTheRequiredAverageGradeDialog("Medium");
+                }
+            });
         }
 
         easyScore.setText("Score : "+String.valueOf(easyAverageScore));
@@ -181,6 +196,25 @@ public class MainActivity extends AppCompatActivity {
         // Insert the new row, returning the primary key value of the new row
         prefs.edit().putBoolean("db_setup",true).apply();
         getScores();
+    }
+
+    protected void showTheRequiredAverageGradeDialog(String calledFor) {
+        errorPopUp.setContentView(R.layout.hint_pop);
+        TextView errorPopUpText = errorPopUp.findViewById(R.id.quiz_hint_text);
+        Button cancelButton = errorPopUp.findViewById(R.id.cancel_button);
+
+        String errorLoading = "You need to finish the "+calledFor+" first with average score of 10 or above to unlock this quiz.";
+        errorPopUpText.setText(errorLoading);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                errorPopUp.dismiss();
+            }
+        });
+
+        errorPopUp.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        errorPopUp.show();
     }
 
 

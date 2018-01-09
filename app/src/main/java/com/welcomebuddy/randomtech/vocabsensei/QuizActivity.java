@@ -39,6 +39,7 @@ public class QuizActivity extends AppCompatActivity {
     private static int position;
 
     Dialog hintPopUp;
+    Dialog finishPopUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,6 @@ public class QuizActivity extends AppCompatActivity {
         }
         TextView score = findViewById(R.id.textview_score);
         score.setText("Score: "+SCORE);
-        hintPopUp = new Dialog(this);
     }
 
     protected void layoutTheQuiz(){
@@ -76,16 +76,22 @@ public class QuizActivity extends AppCompatActivity {
             JSONArray guess_list = getGuesses(guesses);
             guess_list.put(word_list.getJSONObject(QUIZ_INCREMENT));
             JSONArray choices = shuffle(guess_list);
-//            chosenWord.setText(guesses.toString());
+
             chosenWord.setText(word_list.getJSONObject(QUIZ_INCREMENT).getString("word"));
-            firstChoice.setText(choices.getJSONObject(0).getString("definition"));
-            secondChoice.setText(choices.getJSONObject(1).getString("definition"));
-            thirdChoice.setText(choices.getJSONObject(2).getString("definition"));
-            fourthChoice.setText(choices.getJSONObject(3).getString("definition"));
+            String first_sentence = choices.getJSONObject(0).getString("definition");
+            String second_sentence = choices.getJSONObject(1).getString("definition");
+            String third_sentence = choices.getJSONObject(2).getString("definition");
+            String fourth_sentence = choices.getJSONObject(3).getString("definition");
+
+            firstChoice.setText(first_sentence);
+            secondChoice.setText(second_sentence);
+            thirdChoice.setText(third_sentence);
+            fourthChoice.setText(fourth_sentence);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        textView.setText(detail + Integer.toString(position) + words.toString());
+
     }
 
     protected JSONArray getWords(JSONArray words) {
@@ -162,57 +168,72 @@ public class QuizActivity extends AppCompatActivity {
             }
             QUIZ_INCREMENT++;
             layoutTheQuiz();
+            if(QUIZ_INCREMENT==11) {
+                finishTheQuiz();
+            }
         } else {
-            Toast.makeText(this, "Quiz up, try the next one!!",
-                    Toast.LENGTH_SHORT).show();
-
-            QuizDbHelper mDbHelper = new QuizDbHelper(this);
-
-            // Gets the data repository in write mode
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-            // Create a new map of values, where column names are the keys
-            ContentValues values = new ContentValues();
-            values.put(QuizContract.QuizEntry.COLUMN_SCORE,SCORE);
-
-            String selector = QuizContract.QuizEntry.COLUMN_KEY + " = ? AND " + QuizContract.QuizEntry.COLUMN_DETAIL + " = ?";
-            String[] selectOptions = {Integer.toString(position),detail.toLowerCase()};
-
-            db.update(QuizContract.QuizEntry.TABLE_NAME,values,selector,selectOptions);
-
+            finishTheQuiz();
         }
     }
 
-    protected void firstChoice(View v) {
+    protected void finishTheQuiz() {
+        Toast.makeText(this, "Quiz up, try the next one!!",
+                Toast.LENGTH_SHORT).show();
+
+        QuizDbHelper mDbHelper = new QuizDbHelper(this);
+
+        // Gets the data repository in write mode
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(QuizContract.QuizEntry.COLUMN_SCORE,SCORE);
+
+        String selector = QuizContract.QuizEntry.COLUMN_KEY + " = ? AND " + QuizContract.QuizEntry.COLUMN_DETAIL + " = ?";
+        String[] selectOptions = {Integer.toString(position),detail.toLowerCase()};
+
+        db.update(QuizContract.QuizEntry.TABLE_NAME,values,selector,selectOptions);
+
+        finishQuizPopup();
+    }
+
+    public void firstChoice(View v) {
         TextView textView = findViewById(v.getId());
         checkAnswer(textView.getText().toString());
     }
 
-    protected void secondChoice(View v) {
+    public void secondChoice(View v) {
         TextView textView = findViewById(v.getId());
         checkAnswer(textView.getText().toString());
     }
 
-    protected void thirdChoice(View v) {
+    public void thirdChoice(View v) {
         TextView textView = findViewById(v.getId());
         checkAnswer(textView.getText().toString());
     }
 
-    protected void fourthChoice(View v) {
+    public void fourthChoice(View v) {
         TextView textView = findViewById(v.getId());
         checkAnswer(textView.getText().toString());
     }
 
-    protected void getHint(View v) {
+    public void getHint(View v) {
+        hintPopUp = new Dialog(this);
         hintPopUp.setContentView(R.layout.hint_pop);
         TextView hintPopUpText = hintPopUp.findViewById(R.id.quiz_hint_text);
         Button cancelButton = hintPopUp.findViewById(R.id.cancel_button);
 
-        try {
-            hintPopUpText.setText(word_list.getJSONObject(QUIZ_INCREMENT).getString("sentence"));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(QUIZ_INCREMENT<=10) {
+            try {
+                hintPopUpText.setText(word_list.getJSONObject(QUIZ_INCREMENT).getString("sentence"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            String quizOver = "Please choose another quiz, this quiz is over!";
+            hintPopUpText.setText(quizOver);
         }
+
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,11 +247,12 @@ public class QuizActivity extends AppCompatActivity {
     }
 
 
-    protected void finishQuiz() {
-        hintPopUp.setContentView(R.layout.hint_pop);
-        TextView scorePopUpText = hintPopUp.findViewById(R.id.quiz_hint_text);
-        Button cancelButton = hintPopUp.findViewById(R.id.cancel_button);
-        Button goBack = new Button(this);
+    protected void finishQuizPopup() {
+        finishPopUp = new Dialog(this);
+        finishPopUp.setContentView(R.layout.hint_pop);
+        TextView scorePopUpText = finishPopUp.findViewById(R.id.quiz_hint_text);
+        Button cancelButton = finishPopUp.findViewById(R.id.cancel_button);
+        Button goBack = finishPopUp.findViewById(R.id.go_back_button);
 
         String score_text= "You achieved the score of : "+SCORE+"\n keep trying!";
         scorePopUpText.setText(score_text);
@@ -238,7 +260,7 @@ public class QuizActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                hintPopUp.dismiss();
+                finishPopUp.dismiss();
             }
         });
 
@@ -249,9 +271,10 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
-        LinearLayout linearLayout = findViewById(R.id.quiz_layout_hint);
-        linearLayout.addView(goBack);
-        hintPopUp.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        hintPopUp.show();
+        goBack.setVisibility(View.VISIBLE);
+
+        finishPopUp.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        finishPopUp.show();
     }
+
 }
